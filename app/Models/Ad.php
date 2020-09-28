@@ -10,7 +10,7 @@ class Ad extends Model
     use HasFactory;
 
     protected $fillable = [
-        'title',
+        'name',
         'description',
         'price',
     ];
@@ -24,4 +24,5 @@ class Ad extends Model
     {
         return $this->hasMany('App\Models\AdPhoto');
     }
+
 }

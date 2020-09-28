@@ -35,11 +35,13 @@ class AdService
 
         $requestData = $createAdRequest->all();
         if ($requestData){
-            $data['title'] = $requestData['title'];
+            $data['name'] = $requestData['name'];
             $data['description'] = $requestData['description'];
             $data['price'] = $requestData['price'];
             $data['images'] = $requestData['images'];
-            $this->adRepository->create($data);
+            $data['main_image'] = $requestData['main_image'];
+            return $this->adRepository->create($data);
+
         }
 
     }

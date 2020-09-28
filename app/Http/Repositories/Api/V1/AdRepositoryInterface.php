@@ -10,6 +10,6 @@ interface AdRepositoryInterface
 
     public function create($data);
 
-    public function getAll();
+    public function getAll($sortParams);
 
 }

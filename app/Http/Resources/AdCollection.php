@@ -16,7 +16,7 @@ class AdCollection extends JsonResource
     {
         return [
             'id' => $this->id,
-            'title' => $this->title,
+            'name' => $this->name,
             'description' => $this->description,
             'price' => $this->price,
             'photos' => $this->photos,

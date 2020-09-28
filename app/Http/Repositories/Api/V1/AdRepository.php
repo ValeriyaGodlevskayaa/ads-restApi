@@ -5,6 +5,7 @@ namespace App\Http\Repositories\Api\V1;
 
 
 use App\Models\Ad;
+use App\Models\AdPhoto;
 
 class AdRepository implements AdRepositoryInterface
 {
@@ -18,10 +19,10 @@ class AdRepository implements AdRepositoryInterface
         return $ad;
     }
 
-    public function getAll($sort_price = null, $sort_date = null)
+    public function getAll($sortParams)
     {
-        return Ad::orderBy('price', $sort_price ?? 'asc')
-            ->orderBy('created_at', $sort_date ?? 'asc');
+        return Ad::orderBy('price', $sortParams['sort_price'] ?? 'asc')
+            ->orderBy('created_at', $sortParams['sort_date'] ?? 'asc');
     }
 
     public function create($data)
@@ -32,13 +33,17 @@ class AdRepository implements AdRepositoryInterface
             foreach ($images as $key => $image){
                 $img[$key] = ['link' => $image, 'main' => 0];
             }
-
             if ($index = $data['main_image']){
-                $img[$index]['main'] = 1;
+                $img[$index]['main'] = AdPhoto::MAIN_IMAGE;
             }
             $ad->photos()->createMany($img);
         }
+
+        if (!$ad || !$ad->id){
+            throw new \DomainException('Error, not saved ad.');
+        }
         return $ad;
+
     }
 
 }

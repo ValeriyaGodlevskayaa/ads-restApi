@@ -33,7 +33,7 @@ class CreateAdRequest extends FormRequest
     public function rules()
     {
         return [
-            'title' => 'required|string|min:3|max:100',
+            'name' => 'required|string|min:3|max:100',
             'description' => 'required|string|min:10|max:1000',
             'price' => 'required|integer',
             'images' => 'array|required|min:1|max:3',
@@ -45,7 +45,7 @@ class CreateAdRequest extends FormRequest
     public function messages()
     {
         return [
-            'title.required' => 'Required title',
+            'name.required' => 'Required name',
             'description.required' => 'Required description',
             'price.required' => 'Required price',
             'main_image.required' => 'Required main image.',

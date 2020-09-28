@@ -9,6 +9,8 @@ class AdPhoto extends Model
 {
     use HasFactory;
 
+    const MAIN_IMAGE = 1;
+
     protected $fillable = [
         'link',
         'main',

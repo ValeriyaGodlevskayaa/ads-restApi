@@ -30,15 +30,19 @@ class AdController extends Controller
         try {
             $ad = $this->adService->getAd($id);
             return response()->json(new AdCollection($ad), 200);
-        }catch (\DomainException $e){
-            return response()->json(['message' => $e->getMessage()], 404);
+        }catch (\DomainException $domainException){
+            return response()->json(['message' => $domainException->getMessage()], 404);
         }
 
     }
 
     public function store(CreateAdRequest $createAdRequest)
     {
-        $ad = $this->adService->createAd($createAdRequest);
-        return response()->json(['data' => new AdCollection($ad)], 201);
+        try {
+            $ad = $this->adService->createAd($createAdRequest);
+        }catch (\DomainException $domainException){
+            return response()->json(['message' => $domainException->getMessage()]);
+        }
+        return response()->json(['data' => new AdCollection($ad)], 200);
     }
 }
