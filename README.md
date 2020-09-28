@@ -35,5 +35,9 @@ caching - to increase the speed of response from the server, caching can be adde
 
 ## Инструкция установки
 
-
+- git clone https://github.com/ValeriyaGodlevskayaa/ads-restApi.git
+- cd ads-restApi
+- composer install
+- создать файл .env и скопировать с файла .env.example, указать свои настройки к БД
+- выполнить миграции командой: php artisan migrate
 
