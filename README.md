@@ -42,3 +42,10 @@ caching - to increase the speed of response from the server, caching can be adde
 - выполнить миграции командой: `php artisan migrate`
 - запустить все тесты: `vendor/bin/phpunit`
 
+## Методы для rest api
+- url: /api/v1/ads method: GET - получаем список всех объявлений, есть возможность передать дополнительные параметры(sort_price=asc/desc и sort_date=asc/desc) - сортировка по цене и дате создания
+- url: /api/v1/ads/create method: POST
+ 
+ Пример тела запроса:
+ 
+ `name=test ads&price=33&images[1]=link one&images[2]=link two&&images[3]=link test&main_image=2&description=test description for ad`

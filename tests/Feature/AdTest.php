@@ -2,13 +2,10 @@
 
 namespace Tests\Feature;
 
-use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Foundation\Testing\WithFaker;
 use Tests\TestCase;
 
 class AdTest extends TestCase
 {
-
     public function testGetAds()
     {
         $response = $this->json('GET', 'api/v1/ads');
@@ -24,7 +21,8 @@ class AdTest extends TestCase
     public function testRequiresFieldFromAd()
     {
         $response = $this->json('POST', 'api/v1/ads/create');
-        $response->assertStatus(200);
+        $response->assertStatus(422);
 
     }
+
 }

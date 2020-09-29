@@ -18,12 +18,12 @@ class AdService
         $this->adRepository = $adRepository;
     }
 
-    public function getAds($requestSort)
+    public function getAds($requestSort=[])
     {
         return $this->adRepository->getAll($requestSort);
     }
 
-    public function getAd($id)
+    public function getAd(int $id)
     {
         return $this->adRepository->getById($id);
     }
