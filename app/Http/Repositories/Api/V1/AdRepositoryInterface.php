@@ -8,7 +8,7 @@ interface AdRepositoryInterface
 {
     public function getById(int $id);
 
-    public function create($data);
+    public function create($data, $links);
 
     public function getAll($sortParams);
 

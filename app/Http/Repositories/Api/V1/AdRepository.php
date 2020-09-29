@@ -25,19 +25,10 @@ class AdRepository implements AdRepositoryInterface
             ->orderBy('created_at', $sortParams['sort_date'] ?? 'asc');
     }
 
-    public function create($data)
+    public function create($data, $links)
     {
         $ad = Ad::create($data);
-        if ($images = $data['images']){
-            $img = [];
-            foreach ($images as $key => $image){
-                $img[$key] = ['link' => $image, 'main' => 0];
-            }
-            if ($index = $data['main_image']){
-                $img[$index]['main'] = AdPhoto::MAIN_IMAGE;
-            }
-            $ad->photos()->createMany($img);
-        }
+        $ad->photos()->createMany($links);
 
         if (!$ad || !$ad->id){
             throw new \DomainException('Error, not saved ad.');
@@ -45,5 +36,6 @@ class AdRepository implements AdRepositoryInterface
         return $ad;
 
     }
+
 
 }
