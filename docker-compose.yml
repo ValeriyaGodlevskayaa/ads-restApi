@@ -1,0 +1,60 @@
+version: '3'
+
+services:
+  nginx:
+    container_name: ad-laravel_nginx
+    build:
+      context: ./
+      dockerfile: docker/nginx.docker
+    volumes:
+      - ./:/var/www
+    ports:
+      - "8080:80"
+    links:
+      - php-fpm
+  php-fpm:
+    container_name: ad-laravel_php-fpm
+    build:
+      context: ./
+      dockerfile: docker/php-fpm.docker
+    volumes:
+      - ./:/var/www
+    links:
+      - mysql
+      - redis
+  php-cli:
+    container_name: ad-laravel_php-cli
+    build:
+      context: ./
+      dockerfile: docker/php-fpm.docker
+    volumes:
+        - ./:/var/www
+    links:
+        - mysql
+        - redis
+  mysql:
+    image: mysql:5.7
+    container_name: ad-laravel_mysql
+    volumes:
+      - ./storage/docker/mysql:/var/lib/mysql
+    environment:
+      - "MYSQL_ROOT_PASSWORD=admin"
+      - "MYSQL_USER=admin"
+      - "MYSQL_PASSWORD=admin"
+      - "MYSQL_DATABASE=db_ads"
+    ports:
+      - "33061:3306"
+  redis:
+    image: redis:alpine
+    container_name: ad-laravel_redis
+    ports:
+      - "63791:6379"
+  node:
+    container_name: ad-laravel_node
+    build:
+      context: ./
+      dockerfile: docker/node.docker
+    volumes:
+        - ./:/var/www
+    tty: true
+

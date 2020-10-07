@@ -28,29 +28,25 @@ class AdService
         return $this->adRepository->getById($id);
     }
 
-    public function createAd(CreateAdRequest $createAdRequest)
+    public function createAd($requestData)
     {
-        if (!empty($createAdRequest->get('error'))){
-            return response()->json($createAdRequest->get('error'));
-        }
-
-        $requestData = $createAdRequest->all();
-        if ($requestData){
+        if (!empty($requestData)){
             $data['name'] = $requestData['name'];
             $data['description'] = $requestData['description'];
             $data['price'] = $requestData['price'];
             $data['images'] = $requestData['images'];
             $data['main_image'] = $requestData['main_image'];
 
-            if ($images = $data['images']){
+            if (!empty($images = $data['images'])){
                 $links = [];
                 foreach ($images as $key => $image){
                     $links[$key] = ['link' => $image, 'main' => 0];
                 }
-                if ($index = $data['main_image']){
+                if (!empty($index = $data['main_image'])){
                     $links[$index]['main'] = AdPhoto::MAIN_IMAGE;
                 }
             }
+
             return $this->adRepository->create($data, $links);
 
         }

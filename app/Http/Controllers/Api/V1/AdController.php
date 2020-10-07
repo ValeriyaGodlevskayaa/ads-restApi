@@ -39,7 +39,10 @@ class AdController extends Controller
     public function store(CreateAdRequest $createAdRequest)
     {
         try {
-            $ad = $this->adService->createAd($createAdRequest);
+            if (!empty($createAdRequest->get('error'))){
+                return response()->json($createAdRequest->get('error'));
+            }
+            $ad = $this->adService->createAd($createAdRequest->all());
         }catch (\DomainException $domainException){
             return response()->json(['message' => $domainException->getMessage()]);
         }

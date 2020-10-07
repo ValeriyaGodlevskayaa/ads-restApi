@@ -22,11 +22,11 @@ class AdFactory extends Factory
     public function definition()
     {
         return [
-            'name' => $this->faker->text(100),
-            'description' => $this->faker->realText(1000),
-            'price' => $this->faker->boolean(),
-            'created_at' => $this->faker->dateTime,
-            'updated_at' => $this->faker->dateTime,
+            'name' => $this->faker->text(20),
+            'description' => 'test description ad',
+            'price' => 33,
+            'images' => ['link_for_image', 'link_for_image'],
+            'main_image' => 1
         ];
     }
 }
