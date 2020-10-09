@@ -10,6 +10,7 @@ class AdPhoto extends Model
     use HasFactory;
 
     const MAIN_IMAGE = 1;
+    const NOT_MAiN_IMAGE = 0;
 
     protected $fillable = [
         'link',

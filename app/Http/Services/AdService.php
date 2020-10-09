@@ -1,50 +1,46 @@
 <?php
 
-
 namespace App\Http\Services;
 
-
-use App\Http\Repositories\Api\V1\AdRepository;
-use App\Http\Requests\CreateAdRequest;
+use App\Models\Ad;
 use App\Models\AdPhoto;
-use Illuminate\Http\Request;
 
 class AdService
 {
-    private $adRepository;
 
-    public function __construct(AdRepository $adRepository)
+    public function getAds($sortParams = [])
     {
-        $this->adRepository = $adRepository;
-    }
-
-    public function getAds($requestSort=[])
-    {
-        return $this->adRepository->getAll($requestSort);
+        return Ad::orderBy('price', $sortParams['sort_price'] ?? 'asc')
+            ->orderBy('created_at', $sortParams['sort_date'] ?? 'asc');
     }
 
     public function getAd(int $id)
     {
-        return $this->adRepository->getById($id);
+        return Ad::find($id)->first();
     }
 
     public function createAd($requestData)
     {
-        $links = [];
         if (!empty($requestData)){
-            if (!empty($images = $requestData['images'])){
-                $links = [];
-                foreach ($images as $key => $image){
-                    $links[$key] = ['link' => $image, 'main' => 0];
-                }
-                if (!empty($index = $requestData['main_image'])){
-                    $links[$index]['main'] = AdPhoto::MAIN_IMAGE;
-                }
-            }
-            return $this->adRepository->create($requestData, $links);
-
+            $newData = $this->markToMainImage($requestData);
+            $ad = new Ad($newData);
+            $ad->save();
+            $ad->photos()->createMany($newData['links']);
+            return $ad;
         }
+    }
 
+    private function markToMainImage($requestData)
+    {
+        if (!empty($images = $requestData['images'])){
+            foreach ($images as $key => $image){
+                $requestData['links'][$key] = ['link' => $image, 'main' => AdPhoto::NOT_MAiN_IMAGE];
+            }
+            if (!empty($index = $requestData['main_image'])){
+                $requestData['links'][$index]['main'] = AdPhoto::MAIN_IMAGE;
+            }
+            return $requestData;
+        }
     }
 
 
