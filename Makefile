@@ -8,29 +8,29 @@ docker-build:
 	docker-compose up --build -d
 
 test:
-	docker exec app_php-cli_1 vendor/bin/phpunit --colors=always
+	docker exec ad-laravel_php-cli vendor/bin/phpunit --colors=always
 
 assets-install:
-	docker exec app_node_1 yarn install
+	docker exec ad-laravel_node yarn install
 
 assets-dev:
-	docker exec app_node_1 yarn run dev
+	docker exec ad-laravel_node yarn run dev
 
 assets-watch:
-	docker exec app_node_1 yarn run watch
+	docker exec ad-laravel_node yarn run watch
 
 migrate:
-	docker exec app_php-cli_1 php artisan migrate
+	docker exec ad-laravel_php-cli php artisan migrate
 
 seed:
-	docker exec app_php-cli_1 php artisan db:seed
+	docker exec ad-laravel_php-cli php artisan db:seed
 
 clear:
-	docker exec app_php-cli_1 php artisan config:clear
-	docker exec app_php-cli_1 php artisan cache:clear
+	docker exec ad-laravel_php-cli php artisan config:clear
+	docker exec ad-laravel_php-cli php artisan cache:clear
 
 key:
-	 docker exec app_php-cli_1 php artisan key:generate
+	 docker exec ad-laravel_php-cli php artisan key:generate
 
 #docker exec app_node_1 npm rebuild node-sass --force
 #docker exec app_node_1 npm install

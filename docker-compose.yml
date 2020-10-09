@@ -42,6 +42,8 @@ services:
       - "MYSQL_USER=admin"
       - "MYSQL_PASSWORD=admin"
       - "MYSQL_DATABASE=db_ads"
+    restart: unless-stopped
+    tty: true
     ports:
       - "33061:3306"
   redis:

@@ -19,7 +19,9 @@ class AdTest extends TestCase
     public function setUp(): void
     {
         parent::setUp();
-        $this->service = app()->make(AdService::class);
+        $service = \Mockery::mock(AdService::class);
+        app()->instance(AdService::class, $service);
+        $this->service = $service;
     }
 
     public function tearDown(): void
@@ -32,16 +34,20 @@ class AdTest extends TestCase
      * A basic unit test example.
      *
      * @return void
+     * @test
+     * @group api
      */
-    public function testAd()
+    public function testCreateAd()
     {
-        $service = \Mockery::mock(AdService::class);
-        app()->instance(AdService::class, $service);
-        $data = Ad::factory()->make();
-        $service->createAd($data);
-
-        //$this->assertObjectHasAttribute('name', $res);
-       // var_dump($res->refresh());die();
+        $data = [
+            'name' => 'Test1',
+            'description' => 'test1 description ad',
+            'price' => 55,
+            'images' => ['link_for_image', 'link_for_image'],
+            'main_image' => 0
+        ];
+        $this->service->shouldReceive('createAd')->andReturnSelf();
+        $res = $this->service->createAd($data);
         $this->assertTrue(true);
     }
 

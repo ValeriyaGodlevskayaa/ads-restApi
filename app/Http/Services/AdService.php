@@ -30,27 +30,23 @@ class AdService
 
     public function createAd($requestData)
     {
+        $links = [];
         if (!empty($requestData)){
-            $data['name'] = $requestData['name'];
-            $data['description'] = $requestData['description'];
-            $data['price'] = $requestData['price'];
-            $data['images'] = $requestData['images'];
-            $data['main_image'] = $requestData['main_image'];
-
-            if (!empty($images = $data['images'])){
+            if (!empty($images = $requestData['images'])){
                 $links = [];
                 foreach ($images as $key => $image){
                     $links[$key] = ['link' => $image, 'main' => 0];
                 }
-                if (!empty($index = $data['main_image'])){
+                if (!empty($index = $requestData['main_image'])){
                     $links[$index]['main'] = AdPhoto::MAIN_IMAGE;
                 }
             }
-
-            return $this->adRepository->create($data, $links);
+            return $this->adRepository->create($requestData, $links);
 
         }
 
     }
+
+
 
 }
