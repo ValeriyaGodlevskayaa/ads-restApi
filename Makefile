@@ -32,6 +32,9 @@ clear:
 key:
 	 docker exec ad-laravel_php-cli php artisan key:generate
 
+test:
+	docker exec ad-laravel_php-cli vendor/bin/phpunit
+
 #docker exec app_node_1 npm rebuild node-sass --force
 #docker exec app_node_1 npm install
 #cd /var/lib/mysql/

@@ -35,10 +35,9 @@ class CreateAdRequest extends FormRequest
         return [
             'name' => 'required|string|min:3|max:100',
             'description' => 'required|string|min:10|max:1000',
-            'price' => 'required|integer',
+            'price' => 'required|numeric',
             'images' => 'array|required|min:1|max:3',
-            'images.*' => 'string|min:3',
-            'main_image' =>'required'
+            'images.*' => 'url|min:3',
         ];
     }
 
@@ -49,7 +48,7 @@ class CreateAdRequest extends FormRequest
             'description.required' => 'Required description',
             'price.required' => 'Required price',
             'main_image.required' => 'Required main image.',
-            'images.required' => 'Required images'
+            'images.url' => 'format is invalid '
         ];
     }
 

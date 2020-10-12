@@ -3,47 +3,67 @@
 namespace Tests\Feature;
 
 use App\Models\Ad;
+use App\Models\AdPhoto;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
+/**
+ * Class AdTest
+ * @package Tests\Feature
+ * @group api-ads
+ */
 class AdTest extends TestCase
 {
     use HasFactory;
+    use RefreshDatabase;
 
-    public function testGetAdsAndSort()
+    public function testShowAllAds()
     {
-        $response = $this->json('GET', 'api/v1/ads', ['sort_price' => 'asc', 'sort_date' => 'desc']);
-        $response->assertStatus(200);
-    }
+        $amount = 10;
+        Ad::factory()->has(AdPhoto::factory()->count(2), 'photos')->count($amount)->create();
+        $response = $this->json('GET', '/api/v1/ads');
 
-    public function testRequiresFieldFromAd()
-    {
-        $response = $this->json('POST', 'api/v1/ads/create', [
-            'name' => null,
-            'description' => null,
-            'price' => '33',
-            'images' => ['','','',''],
-            'main_image' => 1
+        $response->assertStatus(200)->assertJsonCount($amount)->assertJsonStructure([
+            '*' => [
+                'id',
+                'name',
+                'description',
+                'price',
+                'photos'
+            ]
         ]);
-
-        $response->assertStatus(422);
-
     }
 
-    public function testSuccessCreateAdRequestValidate()
+
+    public function testCreateAd()
     {
-        $ad = [
-            'name' => 'New Ad with car',
-            'description' => 'This car very good. She very good, and accelerates to 300 km per hour.',
-            'price' => 10000,
-            'images' => ['https://unsplash.com/photos/llRPgs-bF88'],
-            'main_image' => 0
-        ];
-        $response = $this->json('POST', 'api/v1/ads/create', $ad);
-
-        $response->assertStatus(200);
-        $response->assertJson($ad);
-        var_dump($response->getContent());die();
+        $ad = Ad::factory()->make()->toArray();
+        $photos = AdPhoto::factory()->count(3)->make()->toArray();
+        $ad['images'] = array_column($photos, 'link');
+        $ad['main_image'] = rand(0,2);
+        $response = $this->json('POST', '/api/v1/ads/create', $ad);
+        $response->assertStatus(201)->assertJsonStructure([
+            '*' => [
+                'id',
+                'name',
+                'description',
+                'price',
+                'photos'
+            ]
+        ]);
     }
+
+    public function testErrorValidate()
+    {
+        $ad = Ad::factory()->make()->toArray();
+        $response = $this->json('POST', '/api/v1/ads/create', $ad);
+
+        $response->assertStatus(422)
+                ->assertJsonValidationErrors(['images'], 'error')
+                ->assertJsonMissingValidationErrors(['name', 'description', 'price']);
+
+    }
+
 
 }

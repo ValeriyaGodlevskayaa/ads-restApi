@@ -3,16 +3,17 @@
 namespace Database\Factories;
 
 use App\Models\Ad;
+use App\Models\AdPhoto;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
-class AdFactory extends Factory
+class AdPhotoFactory extends Factory
 {
     /**
      * The name of the factory's corresponding model.
      *
      * @var string
      */
-    protected $model = Ad::class;
+    protected $model = AdPhoto::class;
 
     /**
      * Define the model's default state.
@@ -22,9 +23,9 @@ class AdFactory extends Factory
     public function definition()
     {
         return [
-            'name' => $this->faker->sentence(),
-            'description' => $this->faker->text(50),
-            'price' => $this->faker->randomFloat(2, 10, 1000),
+            'ad_id' => Ad::factory(),
+            'link' => $this->faker->imageUrl(),
+            'main' => $this->faker->numberBetween(0,1)
         ];
     }
 }

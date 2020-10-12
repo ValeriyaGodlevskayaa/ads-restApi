@@ -19,9 +19,9 @@ use Illuminate\Support\Facades\Route;
 
 Route::group(['as' => 'api.'], function () {
     Route::prefix('/v1/ads/')->group(function (){
-        Route::get('/', [\App\Http\Controllers\Api\V1\AdController::class, 'index']);
-        Route::get('/{id}', [\App\Http\Controllers\Api\V1\AdController::class, 'getById']);
-        Route::post('/create', [\App\Http\Controllers\Api\V1\AdController::class, 'store']);
+        Route::get('/', [\App\Http\Controllers\Api\V1\AdController::class, 'index'])->name('ads.index');
+        Route::get('/{id}', [\App\Http\Controllers\Api\V1\AdController::class, 'getById'])->name('ads.getById');
+        Route::post('/create', [\App\Http\Controllers\Api\V1\AdController::class, 'store'])->name('ads.create');
     });
 });
 
