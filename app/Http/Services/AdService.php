@@ -4,6 +4,8 @@ namespace App\Http\Services;
 
 use App\Models\Ad;
 use App\Models\AdPhoto;
+use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Support\Facades\DB;
 
 
 /**
@@ -12,64 +14,77 @@ use App\Models\AdPhoto;
  */
 class AdService
 {
+    const COUNT_ITEM = 10;
 
     /**
      * @param array $sortParams
-     * @return mixed
+     * @return LengthAwarePaginator
      */
-    public function getAds($sortParams = [])
+    public function getAds(array $sortParams): LengthAwarePaginator
     {
         return Ad::orderBy('price', $sortParams['sort_price'] ?? 'asc')
-            ->orderBy('created_at', $sortParams['sort_date'] ?? 'asc');
+            ->orderBy('created_at', $sortParams['sort_date'] ?? 'asc')
+            ->paginate(self::COUNT_ITEM);
     }
 
     /**
      * @param int $id
-     * @return mixed
+     * @return Ad
      * @throw Illuminate\Database\Eloquent\ModelNotFoundException
      */
     public function getAd(int $id): Ad
     {
         return Ad::findOrFail($id);
-
     }
 
     /**
      * @param $requestData
-     * @return Ad
      * @throw DomainException
+     * @return array
      */
-    public function createAd($requestData): Ad
+    public function createAd(array $requestData): array
     {
         if (empty($requestData)){
             throw new \DomainException('Error! Params is required.');
         }
         $newData = $this->markToMainImage($requestData);
-        $ad = new Ad($newData);
-        if (!$ad->save()){
-            throw new \DomainException('Not save ad');
-        }
-        $ad->photos()->createMany($newData['links']);
-        return $ad;
+        return $this->save($newData);
 
     }
 
     /**
-     * @param $requestData
-     * @return mixed
+     * @param array $dataImages
+     * @return array
      */
-    private static function markToMainImage($requestData): array
+    private function markToMainImage(array $dataImages): array
     {
-        if (!isset($requestData['images']) || !isset($requestData['main_image']) || empty($images = $requestData['images'])){
+        if (!isset($dataImages['images']) || !isset($dataImages['main_image'])){
             throw new \DomainException('Params images and main_image is required.');
         }
-        foreach ($images as $key => $image){
-            $requestData['links'][$key] = ['link' => $image, 'main' => AdPhoto::NOT_MAiN_IMAGE];
+        $images = $dataImages['images'];
+        if (count($images)>0){
+            foreach ($images as $key => $image){
+                $dataImages['links'][$key] = ['link' => $image, 'main' => AdPhoto::NOT_MAiN_IMAGE];
+            }
         }
-        if (!empty($index = $requestData['main_image'])){
-            $requestData['links'][$index]['main'] = AdPhoto::MAIN_IMAGE;
-        }
-        return $requestData;
+        $index = $dataImages['main_image'];
+        $dataImages['links'][$index]['main'] = AdPhoto::MAIN_IMAGE;
+        return $dataImages;
+
+    }
+
+    /**
+     * @param array $data
+     * @return array
+     */
+    private function save(array $data): array
+    {
+        return DB::transaction(function () use ($data) {
+            $newAd = new Ad($data);
+            $newAd->save();
+            $newAd->photos()->createMany($data['links']);
+            return [$newAd];
+        });
 
     }
 

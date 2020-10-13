@@ -21,7 +21,7 @@ class AdController extends Controller
 
     public function index(Request $request)
     {
-        $ads = $this->adService->getAds($request->all())->paginate(10);
+        $ads = $this->adService->getAds($request->all());
         return response()->json(AdCollection::collection($ads), 200);
     }
 
@@ -43,6 +43,6 @@ class AdController extends Controller
         }catch (\DomainException $domainException){
             return response()->json(['message' => $domainException->getMessage()]);
         }
-        return response()->json(['data' => new AdCollection($ad)], 201);
+        return response()->json(['data' => AdCollection::collection($ad)], 201);
     }
 }
