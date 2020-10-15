@@ -16,6 +16,15 @@ class AdTest extends TestCase
 {
     use RefreshDatabase;
 
+    private $faker;
+
+    public function __construct(?string $name = null, array $data = [], $dataName = '')
+    {
+        parent::__construct($name, $data, $dataName);
+        $this->faker = Factory::create( Factory::DEFAULT_LOCALE);
+    }
+
+
     /**
      * @dataProvider dataTestProvider
      * @param $data
@@ -34,26 +43,50 @@ class AdTest extends TestCase
 
     public function dataTestProvider()
     {
-        $faker = Factory::create( Factory::DEFAULT_LOCALE);
         return [
             [[
-                'name' => $faker->sentence,
-                'description' => $faker->text(300),
-                'price' => $faker->randomFloat(2, 10, 10000),
+                'name' => $this->faker->sentence,
+                'description' => $this->faker->text(300),
+                'price' => $this->faker->randomFloat(2, 10, 10000),
                 'images' => [
-                    $faker->imageUrl(),
-                    $faker->imageUrl()
+                    $this->faker->imageUrl(),
+                    $this->faker->imageUrl()
                 ],
                 'main_image' => 1
             ]],
             [[
-                'name' => $faker->sentence,
-                'description' => $faker->text(300),
-                'price' => $faker->randomFloat(2, 10, 10000),
+                'name' => $this->faker->sentence,
+                'description' => $this->faker->text(300),
+                'price' => $this->faker->randomFloat(2, 10, 10000),
                 'images' => [
-                    $faker->imageUrl(),
-                    $faker->imageUrl()
+                    $this->faker->imageUrl(),
+                    $this->faker->imageUrl()
                 ],
+                'main_image' => 1
+            ]]
+        ];
+    }
+
+    /**
+     * @param $data
+     * @dataProvider generateDataWithoutImagesProvider
+     */
+    public function testExceptionCreateAd($data)
+    {
+        $this->expectException(\DomainException::class);
+        $this->expectExceptionMessage("Images can't empty!");
+        $adService = new AdService();
+        $adService->createAd($data);
+    }
+
+    public function generateDataWithoutImagesProvider()
+    {
+        return [
+            [[
+                'name' => $this->faker->sentence,
+                'description' => $this->faker->text(300),
+                'price' => $this->faker->randomFloat(2, 10, 10000),
+                'images' => [],
                 'main_image' => 1
             ]]
         ];

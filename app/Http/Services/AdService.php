@@ -63,11 +63,14 @@ class AdService
             throw new \DomainException('Params images and main_image is required.');
         }
         $images = $dataImages['images'];
-        if (count($images)>0){
-            foreach ($images as $key => $image){
-                $dataImages['links'][$key] = ['link' => $image, 'main' => AdPhoto::NOT_MAiN_IMAGE];
-            }
+
+        if (count($images) == 0){
+            throw new \DomainException('Images can\'t empty!');
         }
+        foreach ($images as $key => $image){
+            $dataImages['links'][$key] = ['link' => $image, 'main' => AdPhoto::NOT_MAiN_IMAGE];
+        }
+
         $index = $dataImages['main_image'];
         $dataImages['links'][$index]['main'] = AdPhoto::MAIN_IMAGE;
         return $dataImages;
