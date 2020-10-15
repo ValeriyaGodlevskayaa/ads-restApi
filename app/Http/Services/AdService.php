@@ -24,6 +24,7 @@ class AdService
     {
         return Ad::orderBy('price', $sortParams['sort_price'] ?? 'asc')
             ->orderBy('created_at', $sortParams['sort_date'] ?? 'asc')
+            ->limit(self::COUNT_ITEM)
             ->paginate(self::COUNT_ITEM);
     }
 
@@ -40,9 +41,9 @@ class AdService
     /**
      * @param $requestData
      * @throw DomainException
-     * @return array
+     * @return Ad
      */
-    public function createAd(array $requestData): array
+    public function createAd(array $requestData): Ad
     {
         if (empty($requestData)){
             throw new \DomainException('Error! Params is required.');
@@ -75,15 +76,15 @@ class AdService
 
     /**
      * @param array $data
-     * @return array
+     * @return Ad
      */
-    private function save(array $data): array
+    private function save(array $data): Ad
     {
         return DB::transaction(function () use ($data) {
             $newAd = new Ad($data);
             $newAd->save();
             $newAd->photos()->createMany($data['links']);
-            return [$newAd];
+            return $newAd;
         });
 
     }

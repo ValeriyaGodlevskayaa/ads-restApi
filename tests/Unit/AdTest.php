@@ -2,15 +2,9 @@
 
 namespace Tests\Unit;
 
-use App\Http\Requests\CreateAdRequest;
 use App\Http\Services\AdService;
-use App\Models\Ad;
-use App\Models\AdPhoto;
-use Illuminate\Auth\EloquentUserProvider;
+use Faker\Factory;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Support\Facades\DB;
-//use PHPUnit\Framework\TestCase;
-use Mockery\Mock;
 use Tests\TestCase;
 
 /**
@@ -22,28 +16,48 @@ class AdTest extends TestCase
 {
     use RefreshDatabase;
 
-
-//    public function testCreateAd()
-//    {
-//        $data = Ad::factory()->make()->toArray();
-//        $photoLinks = array_column(AdPhoto::factory()->count(2)->make()->toArray(), 'link');
-//        $data['images'] = $photoLinks;
-//        $data['main_image'] = rand(0,1);
-//        $r = new AdService();
-//        $r->createAd($data);
-//
-//    }
-
-    public function testCreateAd()
+    /**
+     * @dataProvider dataTestProvider
+     * @param $data
+     */
+    public function testCreateAd($data)
     {
-        $data = Ad::factory()->make()->toArray();
-        $photoLinks = array_column(AdPhoto::factory()->count(2)->make()->toArray(), 'link');
-        $data['images'] = $photoLinks;
-        $data['main_image'] = rand(0,1);
-        $mock = $this->createMock(AdService::class);
-        $result = $mock->createAd($data);
-        $this->assertInstanceOf(Ad::class, $result);
-
+        $dataFake = $data;
+        $adService = new AdService();
+        $result = $adService->createAd($data)->load('photos')->toArray();
+        $this->assertNotEmpty($result);
+        $this->assertEquals($dataFake['name'], $result['name']);
+        $this->assertEquals($dataFake['description'], $result['description']);
+        $this->assertEquals($dataFake['price'], $result['price']);
+        $this->assertEquals($dataFake['images'], array_column($result['photos'], 'link'));
     }
+
+    public function dataTestProvider()
+    {
+        $faker = Factory::create( Factory::DEFAULT_LOCALE);
+        return [
+            [[
+                'name' => $faker->sentence,
+                'description' => $faker->text(300),
+                'price' => $faker->randomFloat(2, 10, 10000),
+                'images' => [
+                    $faker->imageUrl(),
+                    $faker->imageUrl()
+                ],
+                'main_image' => 1
+            ]],
+            [[
+                'name' => $faker->sentence,
+                'description' => $faker->text(300),
+                'price' => $faker->randomFloat(2, 10, 10000),
+                'images' => [
+                    $faker->imageUrl(),
+                    $faker->imageUrl()
+                ],
+                'main_image' => 1
+            ]]
+        ];
+    }
+
 
 }

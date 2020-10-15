@@ -43,6 +43,6 @@ class AdController extends Controller
         }catch (\DomainException $domainException){
             return response()->json(['message' => $domainException->getMessage()]);
         }
-        return response()->json(['data' => AdCollection::collection($ad)], 201);
+        return response()->json(['data' => AdCollection::collection([$ad])], 201);
     }
 }

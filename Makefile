@@ -39,8 +39,8 @@ test:
 #docker exec app_node_1 npm install
 #cd /var/lib/mysql/
 #chown mysql:mysql db_ads/ -R
-#docker exec app_php-cli_1 chown 777 storage/ -R
-#docker exec app_php-cli_1 chown 777 storage/framework/cache/data/* -R
+#docker exec ad-laravel_php-cli chown 777 storage/ -R
+#docker exec ad-laravel_php-cli chown 777 storage/framework/cache/data/* -R
 
 perm:
 	sudo chown ${USER}:${$USER} bootstrap/cache -R
