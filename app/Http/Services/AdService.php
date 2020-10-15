@@ -15,6 +15,8 @@ use Illuminate\Support\Facades\DB;
 class AdService
 {
     const COUNT_ITEM = 10;
+    const SORT_ASC = 'asc';
+    const SORT_DESC = 'desc';
 
     /**
      * @param array $sortParams
@@ -22,8 +24,8 @@ class AdService
      */
     public function getAds(array $sortParams): LengthAwarePaginator
     {
-        return Ad::orderBy('price', $sortParams['sort_price'] ?? 'asc')
-            ->orderBy('created_at', $sortParams['sort_date'] ?? 'asc')
+        return Ad::orderBy('price', $sortParams['sort_price'] ?? self::SORT_ASC)
+            ->orderBy('created_at', $sortParams['sort_date'] ?? self::SORT_DESC)
             ->limit(self::COUNT_ITEM)
             ->paginate(self::COUNT_ITEM);
     }
