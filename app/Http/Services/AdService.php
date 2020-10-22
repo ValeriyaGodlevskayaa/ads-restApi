@@ -2,11 +2,9 @@
 
 namespace App\Http\Services;
 
-use App\Models\Ad;
-use App\Models\AdPhoto;
-use Illuminate\Pagination\LengthAwarePaginator;
+use App\Http\Resources\AdCollection;
+use App\Models\{Ad, AdPhoto};
 use Illuminate\Support\Facades\DB;
-
 
 /**
  * Class AdService
@@ -20,39 +18,45 @@ class AdService
 
     /**
      * @param array $sortParams
-     * @return LengthAwarePaginator
+     *
+     * @return \Illuminate\Http\Resources\Json\AnonymousResourceCollection
      */
-    public function getAds(array $sortParams): LengthAwarePaginator
+    public function getAds(array $sortParams)
     {
-        return Ad::orderBy('price', $sortParams['sort_price'] ?? self::SORT_ASC)
+        $ads = Ad::orderBy('price', $sortParams['sort_price'] ?? self::SORT_ASC)
             ->orderBy('created_at', $sortParams['sort_date'] ?? self::SORT_DESC)
             ->limit(self::COUNT_ITEM)
             ->paginate(self::COUNT_ITEM);
+
+        return AdCollection::collection($ads);
     }
 
     /**
      * @param int $id
-     * @return Ad
      * @throw Illuminate\Database\Eloquent\ModelNotFoundException
+     * @return \Illuminate\Http\Resources\Json\AnonymousResourceCollection
      */
-    public function getAd(int $id): Ad
+    public function getAd(int $id)
     {
-        return Ad::findOrFail($id);
+        $ad = Ad::find($id);
+
+        return AdCollection::collection($ad);
     }
 
     /**
      * @param $requestData
      * @throw DomainException
-     * @return Ad
+     * @return \Illuminate\Http\Resources\Json\AnonymousResourceCollection
      */
-    public function createAd(array $requestData): Ad
+    public function createAd(array $requestData)
     {
         if (empty($requestData)){
             throw new \DomainException('Error! Params is required.');
         }
         $newData = $this->markToMainImage($requestData);
-        return $this->save($newData);
+        $ad = $this->save($newData);
 
+        return AdCollection::collection([$ad]);
     }
 
     /**
@@ -75,8 +79,8 @@ class AdService
 
         $index = $dataImages['main_image'];
         $dataImages['links'][$index]['main'] = AdPhoto::MAIN_IMAGE;
-        return $dataImages;
 
+        return $dataImages;
     }
 
     /**
@@ -89,6 +93,7 @@ class AdService
             $newAd = new Ad($data);
             $newAd->save();
             $newAd->photos()->createMany($data['links']);
+
             return $newAd;
         });
 

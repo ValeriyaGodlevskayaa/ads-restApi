@@ -17,4 +17,5 @@ Route::get('/', function () {
     return view('welcome');
 });
 
-Route::get('home', [\App\Http\Controllers\HomeController::class, 'index']);
+Route::get('home', [\App\Http\Controllers\HomeController::class, 'index'])->name('home');
+Route::post('send', [\App\Http\Controllers\HomeController::class, 'index'])->name('send');
